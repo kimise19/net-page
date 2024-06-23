@@ -1,4 +1,5 @@
 ﻿using BlazorCrud.Client.model;
+using BlazorCrud.Client.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -27,12 +28,14 @@ namespace BlazorCrud.Client.Services
 
         public async Task CreateBookAsync(Book book)
         {
-            await httpClient.PostAsJsonAsync("http://localhost:61473/api/Libro/CrearLibro", book);
+            var response = await httpClient.PostAsJsonAsync("http://localhost:61473/api/Libro/CrearLibro", book);
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task DeleteBookAsync(int id)
         {
-            await httpClient.DeleteAsync($"http://localhost:61473/api/Libro/EliminarLibro?id={id}");
+            var response = await httpClient.DeleteAsync($"http://localhost:61473/api/Libro/EliminarLibro?id={id}");
+            response.EnsureSuccessStatusCode();
         }
     }
 }
