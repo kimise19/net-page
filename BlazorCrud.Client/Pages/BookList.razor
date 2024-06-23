@@ -1,0 +1,57 @@
+﻿@page "/books"
+
+@using BlazorCrud.Client.Services
+@using BlazorCrud.Client.model
+@inject BookService BookService
+@inject NavigationManager NavigationManager
+
+<h3>Lista de Libros</h3>
+
+@if (books == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (books.Count == 0)
+{
+    <p>No books available.</p>
+}
+else
+{
+    <ul>
+        @foreach (var book in books)
+        {
+            <li>
+                <b>@book.Titulo</b> - @book.Genero (Publicado en @book.AnioPublicacion)
+                <button @onclick="() => EditBook(book.Id)">Edit</button>
+                <button @onclick="() => DeleteBook(book.Id)">Delete</button>
+            </li>
+        }
+    </ul>
+}
+
+<button @onclick="AddBook">Add Book</button>
+
+@code {
+    private List<Book> books;
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await BookService.GetBooksAsync();
+    }
+
+    private void AddBook()
+    {
+        NavigationManager.NavigateTo("/books/add");
+    }
+
+    private void EditBook(int id)
+    {
+        NavigationManager.NavigateTo($"/books/edit/{id}");
+    }
+
+    private async Task DeleteBook(int id)
+    {
+        await BookService.DeleteBookAsync(id);
+        books = await BookService.GetBooksAsync();
+    }
+}

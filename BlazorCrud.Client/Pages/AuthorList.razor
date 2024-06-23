@@ -1,0 +1,57 @@
+﻿@page "/authors"
+
+@using BlazorCrud.Client.Models
+@using BlazorCrud.Client.Services
+@inject AuthorService AuthorService
+@inject NavigationManager NavigationManager
+
+<h3>Lista de Autores</h3>
+
+@if (authors == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (authors.Count == 0)
+{
+    <p>No authors available.</p>
+}
+else
+{
+    <ul>
+        @foreach (var author in authors)
+        {
+            <li>
+                <b>@author.Nombre @author.Apellido</b>
+                <button @onclick="() => EditAuthor(author.Id)">Edit</button>
+                <button @onclick="() => DeleteAuthor(author.Id)">Delete</button>
+            </li>
+        }
+    </ul>
+}
+
+<button @onclick="AddAuthor">Add Author</button>
+
+@code {
+    private List<Author> authors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authors = await AuthorService.GetAuthorsAsync();
+    }
+
+    private void AddAuthor()
+    {
+        NavigationManager.NavigateTo("/authors/add");
+    }
+
+    private void EditAuthor(int id)
+    {
+        NavigationManager.NavigateTo($"/authors/edit/{id}");
+    }
+
+    private async Task DeleteAuthor(int id)
+    {
+        await AuthorService.DeleteAuthorAsync(id);
+        authors = await AuthorService.GetAuthorsAsync();
+    }
+}

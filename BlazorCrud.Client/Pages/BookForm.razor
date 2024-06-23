@@ -1,0 +1,58 @@
+﻿@page "/books/add"
+@page "/books/edit/{id:int}"
+
+@using BlazorCrud.Client.Services
+@using BlazorCrud.Client.model
+@inject BookService BookService
+@inject NavigationManager NavigationManager
+
+<h3>@(isEdit ? "Edit Book" : "Add Book")</h3>
+
+<div>
+    <label>Titulo:</label>
+    <input @bind="book.Titulo" />
+
+    <label>Genero:</label>
+    <input @bind="book.Genero" />
+
+    <label>Anio Publicacion:</label>
+    <input type="number" @bind="book.AnioPublicacion" />
+
+    <label>Autor ID:</label>
+    <input type="number" @bind="book.AutorId" />
+
+    <label>Estado:</label>
+    <input type="checkbox" @bind="book.Estado" />
+
+    <button @onclick="SaveBook">Save</button>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Book book = new Book();
+    private bool isEdit => Id.HasValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (isEdit)
+        {
+            book = await BookService.GetBookByIdAsync(Id.Value);
+        }
+    }
+
+    private async Task SaveBook()
+    {
+        if (isEdit)
+        {
+            await BookService.CreateBookAsync(book); 
+        }
+        else
+        {
+            await BookService.CreateBookAsync(book);
+        }
+
+        NavigationManager.NavigateTo("/books");
+    }
+}

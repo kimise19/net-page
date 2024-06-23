@@ -1,0 +1,48 @@
+﻿@page "/authors/add"
+@page "/authors/edit/{id:int}"
+@using BlazorCrud.Client.Models
+@using BlazorCrud.Client.Services
+@inject AuthorService AuthorService
+@inject NavigationManager NavigationManager
+
+<h3>@(isEdit ? "Edit Author" : "Add Author")</h3>
+
+<div>
+    <label>Nombre:</label>
+    <input @bind="author.Nombre" />
+
+    <label>Apellido:</label>
+    <input @bind="author.Apellido" />
+
+    <button @onclick="SaveAuthor">Save</button>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Author author = new Author();
+    private bool isEdit => Id.HasValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (isEdit)
+        {
+            author = await AuthorService.GetAuthorByIdAsync(Id.Value);
+        }
+    }
+
+    private async Task SaveAuthor()
+    {
+        if (isEdit)
+        {
+            await AuthorService.CreateAuthorAsync(author); // Cambia esta línea según tu lógica de actualización
+        }
+        else
+        {
+            await AuthorService.CreateAuthorAsync(author);
+        }
+
+        NavigationManager.NavigateTo("/authors");
+    }
+}
